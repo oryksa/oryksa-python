@@ -1,0 +1,43 @@
+name: ci
+
+# Offline tests (no key, no network) on every supported Python, and a build that must be clean.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install the package and pytest
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install ".[test]"
+      - name: Tests
+        run: python -m pytest -v
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Build and check
+        run: |
+          python -m pip install --upgrade build twine
+          python -m build
+          python -m twine check --strict dist/*

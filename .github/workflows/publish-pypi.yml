@@ -1,0 +1,41 @@
+name: publish-pypi
+
+# Publishes the package to PyPI with a trusted publisher (no token stored anywhere).
+on:
+  workflow_dispatch:
+  release:
+    types: [published]
+
+jobs:
+  pypi:
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: The release tag is the package version
+        if: github.event_name == 'release'
+        env:
+          TAG: ${{ github.event.release.tag_name }}
+        run: |
+          v=$(python -c "import re; print(re.search(r'^version = \"([^\"]+)\"', open('pyproject.toml').read(), re.M).group(1))")
+          echo "tag $TAG, package $v"
+          test "$TAG" = "v$v"
+      - name: Tests
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install ".[test]"
+          python -m pytest -q
+      - name: Build
+        run: |
+          python -m pip install --upgrade build twine
+          python -m build
+          python -m twine check --strict dist/*
+      - uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: dist/

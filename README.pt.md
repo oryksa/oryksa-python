@@ -8,7 +8,7 @@ SDK oficial de Python da **ORYKSA AI Employees**: põe um colaborador de IA que 
 
 - Documentação: https://developer.oryksa.com
 - API: `https://api.oryksa.com/v1`
-- Python 3.9 ou mais recente, uma só dependência (`httpx`), clientes síncronos e assíncronos, com tipos.
+- Python 3.10 ou mais recente, uma só dependência (`httpx`), clientes síncronos e assíncronos, com tipos.
 
 ## Instalar
 

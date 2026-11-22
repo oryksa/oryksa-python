@@ -2,7 +2,7 @@
 
 ## 1.0.0
 
-First version of the official Python SDK (`pip install oryksa`). The same calls as the JavaScript SDK (`@oryksa/sdk` 0.1.5), with the names in snake_case. Python 3.9 or newer; the only dependency is `httpx`.
+First version of the official Python SDK (`pip install oryksa`). The same calls as the JavaScript SDK (`@oryksa/sdk` 0.1.5), with the names in snake_case. Python 3.10 or newer; the only dependency is `httpx`.
 
 - **Server client with the secret key: `Oryksa`.** `chat`, `conversations`, `conversation`, `account`, `create_session` (with `customer_email` / `customer_phone` for a signed-in user), `learn_app`, `agent.update` / `agent.appearance`, `knowledge.get` / `set_pages` / `crawl` / `add_faq`, `widget.snippet` / `set_domains` and `webhooks.list` / `create` / `delete` / `test`. A reply that is still being written comes back as `status: "pending"` (HTTP 202), not as an error.
 - **App client with a session token: `OryksaClient`.** It never takes the secret key (`ValueError`). `agent`, `send`, `messages`, `ai`, `link_preview`, and `send_and_wait`, which reads the conversation until a pending reply lands (as `sendAndWait` in the Android, iOS and Flutter SDKs). `get_token` is asked for a new token when the current one expires (`session_expired` or HTTP 401), and the call is made once more.
@@ -13,4 +13,4 @@ First version of the official Python SDK (`pip install oryksa`). The same calls 
 - **Webhooks**: `verify_webhook(raw_body, signature_header, secret)` checks `ORYKSA-Signature` (HMAC-SHA256, 5 minutes of tolerance).
 - **Errors**: `OryksaError` with `status`, `code`, `message` and the other fields of the API error (`upgrade_url`, `retry_after`...); `status` 0 and `code` `network_error` when ORYKSA cannot be reached.
 - Every request says `X-ORYKSA-SDK: python/1.0.0`; a test fails if the version in the code ever drifts from `pyproject.toml`.
-- Offline tests with `pytest` and `httpx.MockTransport` (no key, no network); CI runs them on Python 3.9 to 3.13.
+- Offline tests with `pytest` and `httpx.MockTransport` (no key, no network); CI runs them on Python 3.10 to 3.13.
